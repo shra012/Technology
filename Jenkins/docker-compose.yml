@@ -1,0 +1,96 @@
+version: '3'
+
+services:
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins-fs
+    ports:
+      - 7000:8080
+      - 9010:9010
+    links:
+      - socatdockersock
+    privileged: true
+    environment:
+      - DOCKER_HOST=tcp://docker:2376
+      - DOCKER_CERT_PATH=/certs/client
+      - DOCKER_TLS_VERIFY=1
+    volumes:
+      - ./.jenkins:/var/jenkins_home
+      - ./.jenkins-backup:/var/jenkins_backup
+      - ./.jenkins-workspace:/home/jenkins
+      - ./.jenkins-workspace/.jenkins:/home/jenkins/.jenkins
+  jenkins-agent:
+    image: jenkins/ssh-agent:jdk11
+    container_name: jenkins-agent-fs
+    privileged: true
+    expose:
+      - 22
+    environment:
+      - JENKINS_AGENT_SSH_PUBKEY=
+  socatdockersock:
+    image: bobrik/socat:latest
+    container_name: socatdocker-fs
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: TCP4-LISTEN:2375,fork,reuseaddr UNIX-CONNECT:/var/run/docker.sock
+
+  artifactory:
+    image: docker.bintray.io/jfrog/artifactory-oss:latest
+    container_name: artifactory-fs
+    ports:
+     - 8081:8081
+     - 8082:8082
+    volumes:
+     - ./.artifactory:/var/opt/jfrog/artifactory
+    depends_on:
+     - postgresql-fs
+    links:
+     - postgresql-fs
+    environment:
+     - DB_TYPE=postgresql
+     - DB_USER=artifactory
+     - DB_PASSWORD=password
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 32000
+        hard: 40000
+
+  postgresql:
+    image: docker.bintray.io/postgres:latest
+    container_name: postgresql-fs
+    ports:
+     - 5432:5432
+    environment:
+     - POSTGRES_DB=artifactory
+     - POSTGRES_USER=artifactory
+     - POSTGRES_PASSWORD=password
+    volumes:
+     - ./.postgresql/data:/var/lib/postgresql/data
+    restart: always
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 32000
+        hard: 40000
+  pgadmin4: 
+    image: dpage/pgadmin4
+    container_name: pgadmin4-fs
+    ports:
+     - 5050:5050
+    environment:
+     - PGADMIN_LISTEN_PORT=5050
+     - PGADMIN_DEFAULT_EMAIL=admin@pgadmin4.com
+     - PGADMIN_DEFAULT_PASSWORD=password
+
+  sonar:
+    image: sonarqube:latest
+    container_name: sonarqube-fs
+    ports:
+      - 9000:9000
+      - 9092:9092
+    volumes:
+      - ./.sonarqube_new/conf:/opt/sonarqube/conf
+      - ./.sonarqube_new/data:/opt/sonarqube/data
+      - ./.sonarqube_new/extensions:/opt/sonarqube/extensions
+      - ./.sonarqube_new/plugins:/opt/sonarqube/lib/bundled-plugins

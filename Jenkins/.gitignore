@@ -1,0 +1,6 @@
+.artifactory
+.jenkins
+.jenkins-backup
+.jenkins-workspace
+.postgresql
+.sonarqube_new
