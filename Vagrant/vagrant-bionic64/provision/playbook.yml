@@ -45,7 +45,7 @@
       owner: vagrant
       group: vagrant
       mode: '0755'
-  - name: Copy file with owner and permissions
+  - name: Copy k3s.yaml file to user .kube folder
     copy:
       remote_src: yes
       src: /etc/rancher/k3s/k3s.yaml
