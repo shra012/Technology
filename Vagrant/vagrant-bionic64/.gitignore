@@ -1,0 +1,3 @@
+.vagrant
+.vscode
+provision/playbook.retry
