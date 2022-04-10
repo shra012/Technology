@@ -20,9 +20,15 @@ services:
       - ./.jenkins-workspace:/home/jenkins
       - ./.jenkins-workspace/.jenkins:/home/jenkins/.jenkins
   jenkins-agent:
-    image: jenkins/ssh-agent:jdk11
+    image: jenkins-agent:latest
+    build:
+      context: ./
+      dockerfile: docker/jenkins-agent/Dockerfile
     container_name: jenkins-agent-fs
     privileged: true
+    user: root
+    volumes:
+      - /Users/nagarajan4/.m2:/home/jenkins/.m2
     expose:
       - 22
     environment:

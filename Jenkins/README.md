@@ -21,3 +21,5 @@ database:
 ```
 
 For setting up the jenkins agent please refer setting up a agent [post](https://www.cloudbees.com/blog/how-to-install-and-run-jenkins-with-docker-compose)
+
+Java Home can be set in agent config which can cause errors when agent starts
