@@ -1,0 +1,31 @@
+---
+version: '3'
+services:
+  artemis:
+    image: quay.io/artemiscloud/activemq-artemis-broker
+    container_name: activemq
+    ports:
+      - "61616:61616"
+      - "5672:5672"
+    environment:
+      AMQ_USER: user
+      AMQ_PASSWORD: password
+  nginx:
+    image: nginx
+    container_name: nginx-activemq
+    ports:
+      - "8161:8161"
+  openssh-server:
+    image: lscr.io/linuxserver/openssh-server:latest
+    container_name: openssh
+    hostname: openssh-server
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - USER_NAME=admin
+      - USER_PASSWORD=password
+      - PASSWORD_ACCESS=true
+    ports:
+      - 2222:2222
+    restart: unless-stopped

@@ -1,0 +1,18 @@
+version: '3'
+services:
+  ldap:
+    image: osixia/openldap:1.5.0
+    container_name: ldap
+    environment:
+        - LDAP_ORGANISATION=organisation
+        - LDAP_DOMAIN=organisation.com
+        - "LDAP_BASE_DN=dc=organisation,dc=com"
+        - LDAP_ADMIN_PASSWORD=organisation
+    volumes:
+    - ./config:/opt/config
+    - ./config/ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom
+    - ./config/schema:/container/service/slapd/assets/config/bootstrap/schema/custom
+    ports:
+        - 389:389
+        - 636:636
+    command: --copy-service
