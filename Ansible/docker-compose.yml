@@ -1,0 +1,68 @@
+version: '3'
+
+services:
+  ansible-controller:
+    image: ansible-centos9:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ansible-controller
+    hostname: ansible-controller
+    volumes:
+      - workspace:/workspace
+      - ssh:/root/.ssh
+    command: tail -f /dev/null
+    networks:
+      ansible-network:
+        ipv4_address: 192.168.61.10
+    restart: unless-stopped
+  ansible-worker1:
+    image: lscr.io/linuxserver/openssh-server:latest
+    container_name: ansible-worker1
+    hostname: ansible-worker1
+    ports:
+       - "2222:2222"
+    networks:
+      ansible-network:
+        ipv4_address: 192.168.61.11
+    environment: &env
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - PUBLIC_KEY=
+      - USER_NAME=ansible
+      - USER_PASSWORD=ansible
+      - PASSWORD_ACCESS=true
+    restart: unless-stopped
+  ansible-worker2:
+    image: lscr.io/linuxserver/openssh-server:latest
+    container_name: ansible-worker2
+    hostname: ansible-worker2
+    ports:
+      - "2223:2222"
+    networks:
+      ansible-network:
+        ipv4_address: 192.168.61.12
+    environment: *env
+    restart: unless-stopped
+
+networks:
+  ansible-network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.61.0/24
+volumes:
+  workspace:
+    driver: local
+    driver_opts:
+      type: none
+      device: ./workspace
+      o: bind
+  ssh:
+    driver: local
+    driver_opts:
+      type: none
+      device: ./ssh
+      o: bind
