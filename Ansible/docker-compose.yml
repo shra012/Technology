@@ -3,9 +3,9 @@ version: '3'
 services:
   ansible-controller:
     image: shra012/ansible-centos9:latest
-    build:
-      context: .
-      dockerfile: Dockerfile
+    # build:
+    #   context: .
+    #   dockerfile: centos-stream9/Dockerfile
     container_name: ansible-controller
     hostname: ansible-controller
     volumes:
@@ -17,30 +17,33 @@ services:
         ipv4_address: 192.168.61.10
     restart: unless-stopped
   ansible-worker1:
-    image: shra012/ansible-centos9:latest
+    image: shra012/openssh-server:latest
     container_name: ansible-worker1
     hostname: ansible-worker1
     ports:
        - "2222:2222"
-    volumes:
-      - workspace:/home/ansible/workspace
-      - ssh:/root/.ssh
     networks:
       ansible-network:
         ipv4_address: 192.168.61.11
+    environment: &env
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - PUBLIC_KEY=
+      - USER_NAME=ansible
+      - USER_PASSWORD=ansible
+      - PASSWORD_ACCESS=true
     restart: unless-stopped
   ansible-worker2:
-    image: shra012/ansible-centos9:latest
+    image: shra012/openssh-server:latest
     container_name: ansible-worker2
     hostname: ansible-worker2
     ports:
       - "2223:2222"
-    volumes:
-      - workspace:/home/ansible/workspace
-      - ssh:/root/.ssh
     networks:
       ansible-network:
         ipv4_address: 192.168.61.12
+    environment: *env
     restart: unless-stopped
 
 networks:
