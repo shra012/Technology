@@ -9,7 +9,7 @@ services:
     container_name: ansible-controller
     hostname: ansible-controller
     volumes:
-      - workspace:/workspace
+      - workspace:/home/ansible/workspace
       - ssh:/root/.ssh
     command: tail -f /dev/null
     networks:
@@ -22,6 +22,9 @@ services:
     hostname: ansible-worker1
     ports:
        - "2222:2222"
+    volumes:
+      - workspace:/home/ansible/workspace
+      - ssh:/root/.ssh
     networks:
       ansible-network:
         ipv4_address: 192.168.61.11
@@ -32,6 +35,9 @@ services:
     hostname: ansible-worker2
     ports:
       - "2223:2222"
+    volumes:
+      - workspace:/home/ansible/workspace
+      - ssh:/root/.ssh
     networks:
       ansible-network:
         ipv4_address: 192.168.61.12
