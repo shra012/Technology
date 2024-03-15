@@ -9,8 +9,8 @@ services:
     container_name: ansible-controller
     hostname: ansible-controller
     volumes:
-      - workspace:/home/ansible/workspace
-      - ssh://home/ansible/.ssh
+      - ./workspace:/home/ansible/workspace
+      - ./ssh://home/ansible/.ssh
     command: tail -f /dev/null
     networks:
       ansible-network:
@@ -53,16 +53,16 @@ networks:
       driver: default
       config:
         - subnet: 192.168.61.0/24
-volumes:
-  workspace:
-    driver: local
-    driver_opts:
-      type: none
-      device: ./workspace
-      o: bind
-  ssh:
-    driver: local
-    driver_opts:
-      type: none
-      device: ./ssh
-      o: bind
+# volumes:
+#   workspace:
+#     driver: local
+#     driver_opts:
+#       type: none
+#       device: ./workspace
+#       o: bind
+#   ssh:
+#     driver: local
+#     driver_opts:
+#       type: none
+#       device: ./ssh
+#       o: bind
