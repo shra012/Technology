@@ -10,7 +10,7 @@ services:
     hostname: ansible-controller
     volumes:
       - workspace:/home/ansible/workspace
-      - ssh:/root/.ssh
+      - ssh://home/ansible/.ssh
     command: tail -f /dev/null
     networks:
       ansible-network:
