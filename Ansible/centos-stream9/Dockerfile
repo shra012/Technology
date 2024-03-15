@@ -12,3 +12,4 @@ RUN groupadd --gid 1000 ansible \
     && echo "ansible ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/ansible
 
 USER ansible
+WORKDIR /home/ansible
