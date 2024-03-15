@@ -2,19 +2,22 @@
 version: '3'
 services:
   artemis:
+    platform: linux/amd64
     image: quay.io/artemiscloud/activemq-artemis-broker
     container_name: activemq
     ports:
       - "61616:61616"
       - "5672:5672"
+      - "8161:8161"
     environment:
       AMQ_USER: user
       AMQ_PASSWORD: password
-  nginx:
-    image: nginx
-    container_name: nginx-activemq
-    ports:
-      - "8161:8161"
+      AMQ_EXTRA_ARGS: "--nio --host 0.0.0.0 --http-host 0.0.0.0 --relax-jolokia"
+  # nginx:
+  #   image: nginx
+  #   container_name: nginx-activemq
+  #   ports:
+  #     - "8161:8161"
   openssh-server:
     image: lscr.io/linuxserver/openssh-server:latest
     container_name: openssh
