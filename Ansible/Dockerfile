@@ -1,9 +1,10 @@
 FROM quay.io/centos/centos:stream9
 LABEL org.opencontainers.image.authors="shravankumar"
 
+# Add user ansible in centos
+
 RUN groupadd --gid 1000 ansible \
-    && useradd --uid 1000 --gid ansible \
-    --shell /bin/bash --create-home /home/ansible \
+    && useradd --uid 1000 --gid ansible --shell /bin/bash --create-home ansible \
     && echo "ansible ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/ansible
 
 RUN dnf update -y && dnf groupinstall -y "Development Tools"
